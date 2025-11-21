@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Minus, RotateCcw } from 'lucide-react';
+import { Plus, Minus, RotateCcw, Scissors } from 'lucide-react';
 
 interface ShimControlsProps {
   rearShim: number;
@@ -11,6 +11,7 @@ interface ShimControlsProps {
 
 const STEP = 0.05; // 0.05mm standard shim step
 const MAX_SHIM = 10.0;
+const MIN_SHIM = -10.0; // Allow negative values to simulate "cutting the base" or lowering below floor
 
 export const ShimControls: React.FC<ShimControlsProps> = ({
   rearShim,
@@ -21,7 +22,7 @@ export const ShimControls: React.FC<ShimControlsProps> = ({
 }) => {
 
   const adjust = (current: number, delta: number, setter: (v: number) => void) => {
-    const next = Math.max(0, Math.min(MAX_SHIM, current + delta));
+    const next = Math.max(MIN_SHIM, Math.min(MAX_SHIM, current + delta));
     setter(parseFloat(next.toFixed(2)));
   };
 
@@ -48,57 +49,57 @@ export const ShimControls: React.FC<ShimControlsProps> = ({
         {/* Rear Feet Controls (Left) */}
         <div className="flex flex-col items-center space-y-3">
             <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Задние лапы</span>
-            <div className="text-3xl font-mono font-bold text-blue-600 min-w-[80px] text-center">
-              {rearShim.toFixed(2)}
-              <span className="text-sm text-slate-400 ml-1">мм</span>
+            <div className={`text-3xl font-mono font-bold min-w-[80px] text-center flex flex-col items-center ${rearShim < 0 ? 'text-amber-600' : 'text-blue-600'}`}>
+              <span>{rearShim > 0 ? '+' : ''}{rearShim.toFixed(2)} <span className="text-sm text-slate-400 font-sans">мм</span></span>
+              {rearShim < 0 && <span className="text-xs font-sans font-medium text-amber-600 flex items-center gap-1"><Scissors size={10}/> Подрезка</span>}
             </div>
             
             <div className="flex gap-2">
               <button
                 onClick={() => adjust(rearShim, -STEP, onUpdateRear)}
                 className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 transition-colors border border-slate-200 shadow-sm"
-                disabled={rearShim <= 0}
+                disabled={rearShim <= MIN_SHIM}
+                title="Опустить (убрать пластину / подрезка)"
               >
                 <Minus size={24} />
               </button>
               <button
                 onClick={() => adjust(rearShim, STEP, onUpdateRear)}
                 className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition-colors shadow-md shadow-blue-200"
+                disabled={rearShim >= MAX_SHIM}
+                title="Поднять (добавить пластину)"
               >
                 <Plus size={24} />
               </button>
             </div>
-            <p className="text-xs text-slate-400 text-center mt-2">
-                "-" убрать / "+" добавить
-            </p>
         </div>
 
         {/* Front Feet Controls (Right) */}
         <div className="flex flex-col items-center space-y-3">
             <span className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Передние лапы</span>
-            <div className="text-3xl font-mono font-bold text-blue-600 min-w-[80px] text-center">
-              {frontShim.toFixed(2)}
-              <span className="text-sm text-slate-400 ml-1">мм</span>
+            <div className={`text-3xl font-mono font-bold min-w-[80px] text-center flex flex-col items-center ${frontShim < 0 ? 'text-amber-600' : 'text-blue-600'}`}>
+              <span>{frontShim > 0 ? '+' : ''}{frontShim.toFixed(2)} <span className="text-sm text-slate-400 font-sans">мм</span></span>
+              {frontShim < 0 && <span className="text-xs font-sans font-medium text-amber-600 flex items-center gap-1"><Scissors size={10}/> Подрезка</span>}
             </div>
             
             <div className="flex gap-2">
               <button
                 onClick={() => adjust(frontShim, -STEP, onUpdateFront)}
                 className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 transition-colors border border-slate-200 shadow-sm"
-                disabled={frontShim <= 0}
+                disabled={frontShim <= MIN_SHIM}
+                title="Опустить (убрать пластину / подрезка)"
               >
                 <Minus size={24} />
               </button>
               <button
                 onClick={() => adjust(frontShim, STEP, onUpdateFront)}
                 className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition-colors shadow-md shadow-blue-200"
+                disabled={frontShim >= MAX_SHIM}
+                title="Поднять (добавить пластину)"
               >
                 <Plus size={24} />
               </button>
             </div>
-             <p className="text-xs text-slate-400 text-center mt-2">
-                "-" убрать / "+" добавить
-            </p>
         </div>
       </div>
     </div>

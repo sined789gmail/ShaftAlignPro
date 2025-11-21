@@ -66,8 +66,12 @@ const App: React.FC = () => {
           
           {/* Left Column: Visualization & Controls (8 cols) */}
           <div className="lg:col-span-8 space-y-6">
-            {/* Canvas now receives the CALCULATED results to visualize deviation */}
-            <MachineCanvas alignment={alignment} results={results} />
+            {/* Canvas now receives measurements to separate visual base offset from shim pivoting */}
+            <MachineCanvas 
+              alignment={alignment} 
+              results={results} 
+              initialMeasurements={measurements} 
+            />
             
             <ShimControls 
               rearShim={alignment.rearShim}
