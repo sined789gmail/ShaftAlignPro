@@ -53,7 +53,7 @@ const App: React.FC = () => {
               </div>
               ShaftAlign Pro
             </h1>
-            <p className="text-slate-500 mt-1">Симулятор центровки валов горизонтальных машин</p>
+            <p className="text-slate-500 mt-1">Симулятор центровки валов</p>
           </div>
           
           <div className={`px-4 py-2 rounded-lg border flex items-center gap-2 transition-colors duration-500 ${isPerfect ? 'bg-green-100 border-green-300 text-green-800' : 'bg-slate-200 border-slate-300 text-slate-600'}`}>
@@ -102,7 +102,7 @@ const App: React.FC = () => {
               
               <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-4 relative z-10">
                 <Info size={18} className="text-blue-500"/>
-                Текущее положение
+                Прогнозируемое положение
               </h3>
               
               <div className="space-y-4 relative z-10">

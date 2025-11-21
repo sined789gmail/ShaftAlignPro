@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Plus, Minus, RotateCcw, Scissors } from 'lucide-react';
 
 interface ShimControlsProps {
@@ -13,6 +13,75 @@ const STEP = 0.05; // 0.05mm standard shim step
 const MAX_SHIM = 10.0;
 const MIN_SHIM = -10.0; // Allow negative values to simulate "cutting the base" or lowering below floor
 
+// --- REPEATING BUTTON COMPONENT ---
+// Handles press-and-hold to continuously trigger onClick with acceleration
+interface RepeatingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  onClick: () => void;
+}
+
+const RepeatingButton: React.FC<RepeatingButtonProps> = ({ onClick, children, disabled, className, ...props }) => {
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const onClickRef = useRef(onClick);
+
+  // Keep the ref synced with the latest onClick prop.
+  // This is crucial because the 'loop' function in setTimeout creates a closure.
+  // Without this, the loop would keep calling the OLD onClick function (with old state values),
+  // effectively resetting the state to (Initial + Step) repeatedly instead of incrementing.
+  useEffect(() => {
+    onClickRef.current = onClick;
+  }, [onClick]);
+
+  const stop = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const start = (e: React.MouseEvent | React.TouchEvent) => {
+    if (disabled) return;
+    
+    stop();
+
+    // 1. Trigger immediately using the latest handler
+    onClickRef.current();
+
+    // 2. Setup repeat loop
+    // Initial delay before repeating starts (400ms)
+    timerRef.current = setTimeout(() => {
+       let currentDelay = 150; // Start speed (ms)
+       
+       const loop = () => {
+         // ALWAYS call the current version of the function
+         onClickRef.current();
+         
+         // Accelerate: reduce delay by 15% each step, clamp at 30ms
+         currentDelay = Math.max(30, currentDelay * 0.85); 
+         timerRef.current = setTimeout(loop, currentDelay);
+       };
+       
+       loop();
+    }, 400); 
+  };
+
+  return (
+    <button
+      onMouseDown={start}
+      onMouseUp={stop}
+      onMouseLeave={stop}
+      onTouchStart={start}
+      onTouchEnd={stop}
+      onClick={(e) => e.preventDefault()} // We handle the click logic manually in start()
+      disabled={disabled}
+      className={className}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+
 export const ShimControls: React.FC<ShimControlsProps> = ({
   rearShim,
   frontShim,
@@ -23,6 +92,7 @@ export const ShimControls: React.FC<ShimControlsProps> = ({
 
   const adjust = (current: number, delta: number, setter: (v: number) => void) => {
     const next = Math.max(MIN_SHIM, Math.min(MAX_SHIM, current + delta));
+    // Precision fix to avoid 0.300000004
     setter(parseFloat(next.toFixed(2)));
   };
 
@@ -55,22 +125,22 @@ export const ShimControls: React.FC<ShimControlsProps> = ({
             </div>
             
             <div className="flex gap-2">
-              <button
+              <RepeatingButton
                 onClick={() => adjust(rearShim, -STEP, onUpdateRear)}
-                className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 transition-colors border border-slate-200 shadow-sm"
+                className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 transition-colors border border-slate-200 shadow-sm select-none touch-none"
                 disabled={rearShim <= MIN_SHIM}
                 title="Опустить (убрать пластину / подрезка)"
               >
                 <Minus size={24} />
-              </button>
-              <button
+              </RepeatingButton>
+              <RepeatingButton
                 onClick={() => adjust(rearShim, STEP, onUpdateRear)}
-                className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition-colors shadow-md shadow-blue-200"
+                className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition-colors shadow-md shadow-blue-200 select-none touch-none"
                 disabled={rearShim >= MAX_SHIM}
                 title="Поднять (добавить пластину)"
               >
                 <Plus size={24} />
-              </button>
+              </RepeatingButton>
             </div>
         </div>
 
@@ -83,22 +153,22 @@ export const ShimControls: React.FC<ShimControlsProps> = ({
             </div>
             
             <div className="flex gap-2">
-              <button
+              <RepeatingButton
                 onClick={() => adjust(frontShim, -STEP, onUpdateFront)}
-                className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 transition-colors border border-slate-200 shadow-sm"
+                className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 transition-colors border border-slate-200 shadow-sm select-none touch-none"
                 disabled={frontShim <= MIN_SHIM}
                 title="Опустить (убрать пластину / подрезка)"
               >
                 <Minus size={24} />
-              </button>
-              <button
+              </RepeatingButton>
+              <RepeatingButton
                 onClick={() => adjust(frontShim, STEP, onUpdateFront)}
-                className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition-colors shadow-md shadow-blue-200"
+                className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition-colors shadow-md shadow-blue-200 select-none touch-none"
                 disabled={frontShim >= MAX_SHIM}
                 title="Поднять (добавить пластину)"
               >
                 <Plus size={24} />
-              </button>
+              </RepeatingButton>
             </div>
         </div>
       </div>
