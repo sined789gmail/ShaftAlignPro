@@ -107,7 +107,7 @@ export const MeasurementForm: React.FC<MeasurementFormProps> = ({
                 value={measurements.initialOffset}
                 onChange={(e) => handleMeasurementChange('initialOffset', e.target.value)}
                 className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-colors ${
-                  measurements.initialOffset === 0 ? 'border-slate-300 focus:ring-blue-500' :
+                  measurements.initialOffset === 0 ? 'bg-white border-slate-300 focus:ring-blue-500' :
                   measurements.initialOffset > 0.05 || measurements.initialOffset < -0.05 ? 'border-red-300 bg-red-50 focus:ring-red-500' : 'border-green-300 bg-green-50 focus:ring-green-500'
                 }`}
               />
@@ -132,7 +132,7 @@ export const MeasurementForm: React.FC<MeasurementFormProps> = ({
                 value={measurements.initialAngle}
                 onChange={(e) => handleMeasurementChange('initialAngle', e.target.value)}
                 className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-colors ${
-                   measurements.initialAngle === 0 ? 'border-slate-300 focus:ring-blue-500' :
+                   measurements.initialAngle === 0 ? 'bg-white border-slate-300 focus:ring-blue-500' :
                    Math.abs(measurements.initialAngle) > 0.05 ? 'border-red-300 bg-red-50 focus:ring-red-500' : 'border-green-300 bg-green-50 focus:ring-green-500'
                 }`}
               />

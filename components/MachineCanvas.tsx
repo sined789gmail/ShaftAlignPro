@@ -162,9 +162,10 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
         {/* Vertical ticks */}
         <line x1={x1} y1={y - 5} x2={x1} y2={y + 5} stroke={color} strokeWidth="1" />
         <line x1={x2} y1={y - 5} x2={x2} y2={y + 5} stroke={color} strokeWidth="1" />
-        {/* Label */}
-        <rect x={(x1 + x2)/2 - 30} y={y - 8} width="60" height="16" fill="rgba(255,255,255,0.8)" rx="2" />
-        <text x={(x1 + x2) / 2} y={y + 4} textAnchor="middle" fontSize="11" fill={color} fontFamily="monospace" fontWeight="bold">
+        {/* Label Background - Scaled up */}
+        <rect x={(x1 + x2)/2 - 45} y={y - 12} width="90" height="24" fill="rgba(255,255,255,0.8)" rx="3" />
+        {/* Label Text - Increased font size to 16 (approx 50% larger than 11) */}
+        <text x={(x1 + x2) / 2} y={y + 6} textAnchor="middle" fontSize="16" fill={color} fontFamily="monospace" fontWeight="bold">
             {label}: {value}
         </text>
     </g>
