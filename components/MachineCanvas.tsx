@@ -102,6 +102,13 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
       <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
         <rect width="2" height="4" transform="translate(0,0)" fill="#ef4444" opacity="0.3" />
       </pattern>
+      {/* Arrowhead marker for dimensions */}
+      <marker id="arrow-start" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M9,0 L0,3 L9,6" fill="none" stroke="#64748b" strokeWidth="1" />
+      </marker>
+      <marker id="arrow-end" markerWidth="10" markerHeight="10" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L10,3 L0,6" fill="none" stroke="#64748b" strokeWidth="1" />
+      </marker>
     </defs>
   );
 
@@ -148,13 +155,28 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
     </g>
   );
 
+  const DimensionLine = ({ x1, x2, y, label, value, color = "#64748b" }: { x1: number, x2: number, y: number, label: string, value: number, color?: string }) => (
+    <g>
+        {/* Main horizontal line */}
+        <line x1={x1} y1={y} x2={x2} y2={y} stroke={color} strokeWidth="1" markerStart="url(#arrow-start)" markerEnd="url(#arrow-end)" />
+        {/* Vertical ticks */}
+        <line x1={x1} y1={y - 5} x2={x1} y2={y + 5} stroke={color} strokeWidth="1" />
+        <line x1={x2} y1={y - 5} x2={x2} y2={y + 5} stroke={color} strokeWidth="1" />
+        {/* Label */}
+        <rect x={(x1 + x2)/2 - 30} y={y - 8} width="60" height="16" fill="rgba(255,255,255,0.8)" rx="2" />
+        <text x={(x1 + x2) / 2} y={y + 4} textAnchor="middle" fontSize="11" fill={color} fontFamily="monospace" fontWeight="bold">
+            {label}: {value}
+        </text>
+    </g>
+  );
+
   // Derived constants for drawing feet
   const MACHINE_BOTTOM_Y = 85; // Y relative to shaft (Increased from 70 to reduce feet height)
   const FOOT_BASE_Y = BASE_Y - SHAFT_CENTER_Y_NEUTRAL; // Distance from neutral shaft to floor (100px)
   // Feet height is now 100 - 85 = 15px
 
   return (
-    <div className="w-full h-[400px] bg-slate-50 border border-slate-300 rounded-xl overflow-hidden relative shadow-inner group">
+    <div className="w-full h-[450px] bg-slate-50 border border-slate-300 rounded-xl overflow-hidden relative shadow-inner group">
       <div className="absolute top-4 right-4 text-xs text-slate-400 font-mono text-right pointer-events-none select-none z-10">
         Scale: 1mm = {VERTICAL_SCALE}px<br/>
         Visual Pivot Active
@@ -225,6 +247,28 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
                     <rect x="-5" y={15 + (alignment.frontShim * VERTICAL_SCALE)} width="50" height={Math.abs(alignment.frontShim * VERTICAL_SCALE)} fill="url(#hatch)" stroke="#ef4444" strokeDasharray="2,2" rx="1"/>
                 )}
             </g>
+        </g>
+
+        {/* --- DIMENSION LINES --- */}
+        {/* Drawn relative to the floor/fixed space, translated to align with Motor X axis */}
+        <g transform={`translate(${COUPLING_CENTER_X}, 0)`}>
+             {/* AB Dimension: Rear Foot to Front Foot */}
+             <DimensionLine 
+                x1={REAR_FOOT_X + 20} // Roughly center of foot (Foot width is ~50, path is 0 to 50)
+                x2={FRONT_FOOT_X + 20} 
+                y={BASE_Y + 40} 
+                label="AB" 
+                value={alignment.motorLength} 
+            />
+
+            {/* BC Dimension: Front Foot to Coupling */}
+             <DimensionLine 
+                x1={FRONT_FOOT_X + 20} 
+                x2={0} // Coupling center
+                y={BASE_Y + 40} 
+                label="BC" 
+                value={alignment.couplingDist} 
+            />
         </g>
 
       </svg>

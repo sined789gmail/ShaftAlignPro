@@ -20,8 +20,8 @@ const App: React.FC = () => {
   const [alignment, setAlignment] = useState<AlignmentState>({
     rearShim: 0.00, 
     frontShim: 0.00,
-    motorLength: 500, // 500mm between feet
-    couplingDist: 200 // 200mm from front foot to coupling
+    motorLength: 500, // 500mm between feet (BC)
+    couplingDist: 200 // 200mm from front foot to coupling (AB)
   });
 
   // Computed Results (Current Position = Initial + Correction)
@@ -88,7 +88,12 @@ const App: React.FC = () => {
             {/* Initial Measurements Input */}
             <MeasurementForm 
               measurements={measurements}
-              onChange={setMeasurements}
+              onMeasurementChange={setMeasurements}
+              dimensions={{
+                motorLength: alignment.motorLength,
+                couplingDist: alignment.couplingDist
+              }}
+              onDimensionChange={(key, val) => setAlignment(prev => ({ ...prev, [key]: val }))}
             />
             
             {/* Readings Panel */}
