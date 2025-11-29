@@ -10,9 +10,9 @@ interface MachineCanvasProps {
 export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results, initialMeasurements }) => {
   // --- CONFIGURATION & CONSTANTS ---
   const WIDTH = 800;
-  const HEIGHT = 450;
-  const BASE_Y = 350; // Floor level
-  const SHAFT_CENTER_Y_NEUTRAL = 250; // Where the pump shaft is fixed
+  const HEIGHT = 300; // Reduced height as requested
+  const BASE_Y = 250; // Floor level (Moved up)
+  const SHAFT_CENTER_Y_NEUTRAL = 150; // Where the pump shaft is fixed (Moved up)
   const COUPLING_CENTER_X = WIDTH / 2;
 
   // VISUAL SCALES
@@ -177,12 +177,7 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
   // Feet height is now 100 - 85 = 15px
 
   return (
-    <div className="w-full h-[450px] bg-slate-50 border border-slate-300 rounded-xl overflow-hidden relative shadow-inner group">
-      <div className="absolute top-4 right-4 text-xs text-slate-400 font-mono text-right pointer-events-none select-none z-10">
-        Scale: 1mm = {VERTICAL_SCALE}px (Exaggerated)<br />
-        Visual Pivot Active
-      </div>
-
+    <div className="w-full h-[300px] bg-slate-50 border border-slate-300 rounded-xl overflow-hidden relative shadow-inner group">
       <svg className="w-full h-full" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} preserveAspectRatio="xMidYMid meet">
         <Gradients />
 
