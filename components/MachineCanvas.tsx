@@ -177,7 +177,7 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
   // Feet height is now 100 - 85 = 15px
 
   return (
-    <div className="w-full h-[300px] bg-slate-50 border border-slate-300 rounded-xl overflow-hidden relative shadow-inner group">
+    <div className="w-full sm:h-[300px] aspect-[2/1] sm:aspect-auto bg-slate-50 border border-slate-300 rounded-xl overflow-hidden relative shadow-inner group">
       <svg className="w-full h-full" viewBox="-30 0 600 300" preserveAspectRatio="xMinYMid meet">
         <Gradients />
 
