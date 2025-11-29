@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings2, ArrowUpFromLine, ArrowDownToLine, RotateCw, Ruler, MoveHorizontal } from 'lucide-react';
+import { Settings2, ArrowUpFromLine, ArrowDownToLine, RotateCw, Ruler, MoveHorizontal, RotateCcw } from 'lucide-react';
 import { InitialMeasurements } from '../types';
 
 interface MeasurementFormProps {
@@ -10,13 +10,15 @@ interface MeasurementFormProps {
     couplingDist: number;
   };
   onDimensionChange: (key: 'motorLength' | 'couplingDist', value: number) => void;
+  onResetMeasurements?: () => void;
 }
 
 export const MeasurementForm: React.FC<MeasurementFormProps> = ({
   measurements,
   onMeasurementChange,
   dimensions,
-  onDimensionChange
+  onDimensionChange,
+  onResetMeasurements
 }) => {
 
   // Local state for text input values
@@ -129,10 +131,21 @@ export const MeasurementForm: React.FC<MeasurementFormProps> = ({
 
       {/* Section 2: Readings */}
       <div>
-        <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2 border-b border-slate-200 pb-2">
-          <Settings2 size={18} className="text-blue-600" />
-          Показания прибора
-        </h3>
+        <div className="flex items-center justify-between mb-4 border-b border-slate-200 pb-2">
+          <h3 className="font-bold text-slate-800 flex items-center gap-2">
+            <Settings2 size={18} className="text-blue-600" />
+            Показания прибора
+          </h3>
+          {onResetMeasurements && (
+            <button
+              onClick={onResetMeasurements}
+              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg transition-colors"
+            >
+              <RotateCcw size={14} />
+              Сброс
+            </button>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 

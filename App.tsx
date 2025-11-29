@@ -32,6 +32,7 @@ const App: React.FC = () => {
   const updateRear = (val: number) => setAlignment(prev => ({ ...prev, rearShim: val }));
   const updateFront = (val: number) => setAlignment(prev => ({ ...prev, frontShim: val }));
   const reset = () => setAlignment(prev => ({ ...prev, rearShim: 0, frontShim: 0 }));
+  const resetMeasurements = () => setMeasurements({ initialOffset: 0, initialAngle: 0 });
 
   // Tolerance checks (Standard 0.05mm)
   const isOffsetOk = Math.abs(results.verticalOffset) <= 0.05;
@@ -95,6 +96,7 @@ const App: React.FC = () => {
                 couplingDist: alignment.couplingDist
               }}
               onDimensionChange={(key, val) => setAlignment(prev => ({ ...prev, [key]: val }))}
+              onResetMeasurements={resetMeasurements}
             />
 
             {/* Readings Panel */}
