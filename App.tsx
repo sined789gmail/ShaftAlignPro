@@ -82,22 +82,6 @@ const App: React.FC = () => {
               onUpdateFront={updateFront}
               onReset={reset}
             />
-          </div>
-
-          {/* Right Column: Inputs, Data & AI (4 cols) */}
-          <div className="lg:col-span-4 space-y-6 flex flex-col">
-
-            {/* Initial Measurements Input */}
-            <MeasurementForm
-              measurements={measurements}
-              onMeasurementChange={setMeasurements}
-              dimensions={{
-                motorLength: alignment.motorLength,
-                couplingDist: alignment.couplingDist
-              }}
-              onDimensionChange={(key, val) => setAlignment(prev => ({ ...prev, [key]: val }))}
-              onResetMeasurements={resetMeasurements}
-            />
 
             {/* Readings Panel */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
@@ -127,6 +111,23 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Right Column: Inputs, Data & AI (4 cols) */}
+          <div className="lg:col-span-4 space-y-6 flex flex-col">
+
+            {/* Initial Measurements Input */}
+            <MeasurementForm
+              measurements={measurements}
+              onMeasurementChange={setMeasurements}
+              dimensions={{
+                motorLength: alignment.motorLength,
+                couplingDist: alignment.couplingDist
+              }}
+              onDimensionChange={(key, val) => setAlignment(prev => ({ ...prev, [key]: val }))}
+              onResetMeasurements={resetMeasurements}
+            />
+
 
             {/* Correction Calculator */}
             <CorrectionPanel
