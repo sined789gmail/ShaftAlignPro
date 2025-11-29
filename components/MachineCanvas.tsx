@@ -16,43 +16,43 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
   const COUPLING_CENTER_X = WIDTH / 2;
 
   // VISUAL SCALES
-  // 1mm of movement = 0.8 pixels on screen. (Reduced from 4 to 0.8 per user request for even lower sensitivity)
-  const VERTICAL_SCALE = 0.8; 
-  
+  // 1mm of movement = 20 pixels on screen. (Increased for better visibility)
+  const VERTICAL_SCALE = 20;
+
   // Geometry Definitions (X coordinates relative to Coupling Center)
   // These match the "Compact" visual style requested
   const GAP = 5; // Half gap
   const COUPLING_X = -GAP; // Motor coupling face
-  
+
   // Restored Compact Foot Positions
-  const FRONT_FOOT_X = -140; 
+  const FRONT_FOOT_X = -140;
   // Previous was -300. Shifted 40px right = -260.
-  const REAR_FOOT_X = -260;  
-  
+  const REAR_FOOT_X = -260;
+
   // Derived Visual Dimensions for the SVG logic
   const VISUAL_MOTOR_LENGTH = Math.abs(FRONT_FOOT_X - REAR_FOOT_X); // 120px now
-  
+
   // --- KINEMATIC CALCULATION (VISUAL ONLY) ---
   // To ensure the "Pivot" behavior feels real (e.g. adding shim to rear pivots around front),
   // we calculate the SVG transform based strictly on the feet positions on screen.
-  
+
   // 1. Determine Shim Heights in Pixels (Upwards from floor)
   const rearShimPx = alignment.rearShim * VERTICAL_SCALE;
   const frontShimPx = alignment.frontShim * VERTICAL_SCALE;
-  
+
   // 2. Calculate Slope in Screen Space (Y axis is Down in SVG, but let's think Cartesian first)
   // Cartesian: Y is UP.
   // Rear Point: (REAR_FOOT_X, rearShimPx)
   // Front Point: (FRONT_FOOT_X, frontShimPx)
   // Slope (m) = (y2 - y1) / (x2 - x1)
   const visualSlope = (frontShimPx - rearShimPx) / (FRONT_FOOT_X - REAR_FOOT_X);
-  
+
   // 3. Calculate Height at Coupling (x = COUPLING_X) relative to shim base line
   // y - y1 = m(x - x1)
   // y_coupling = frontShimPx + visualSlope * (COUPLING_X - FRONT_FOOT_X)
   // (This assumes the motor body is a straight line connecting feet to coupling)
   const shimEffectAtCouplingPx = frontShimPx + (visualSlope * (COUPLING_X - FRONT_FOOT_X));
-  
+
   // 4. Total Vertical Translation
   // The motor's coupling center should be at:
   // Neutral_Y - (InitialOffset + ShimEffect)
@@ -66,7 +66,7 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
   // So SVG Angle = -Cartesian Angle
   const visualAngleRad = Math.atan(visualSlope);
   const visualAngleDeg = -visualAngleRad * (180 / Math.PI);
-  
+
   // Add Initial Angular Misalignment visual
   // initialAngle is mm/100mm -> roughly % slope.
   // Positive Initial Angle (Gap Top > Gap Bottom) usually means "Tail High" or "Tail Low" depending on standard.
@@ -74,7 +74,7 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
   // Let's assume: Initial Angle > 0 -> Slope > 0 (Nose Up).
   // We just add it to the rotation.
   const initialAngleDegVisual = -Math.atan(initialMeasurements.initialAngle / 100) * (180 / Math.PI);
-  
+
   const displayAngle = visualAngleDeg + initialAngleDegVisual;
 
   // --- GRADIENTS ---
@@ -117,21 +117,21 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
   const MotorGraphic = () => (
     <g transform="translate(5, 0)">
       {/* Rear Fan Cowl - Extended from -85 to 85 */}
-      <path d="M-310,-85 Q-330,-85 -330,0 Q-330,85 -310,85 L-280,85 L-280,-85 Z" fill="url(#motorBodyGrad)" stroke="#172554" strokeWidth="2"/>
-      
+      <path d="M-310,-85 Q-330,-85 -330,0 Q-330,85 -310,85 L-280,85 L-280,-85 Z" fill="url(#motorBodyGrad)" stroke="#172554" strokeWidth="2" />
+
       {/* Main Stator Body - from -85 to 85 (Height 170) */}
       <rect x="-280" y="-85" width="190" height="170" rx="5" fill="url(#motorBodyGrad)" stroke="#172554" strokeWidth="2" />
-      
+
       {/* Cooling Ribs */}
       <g fill="url(#ribsGrad)" opacity="0.8">
-         {[...Array(8)].map((_, i) => (
-            <rect key={i} x="-280" y={-75 + (i * 20)} width="190" height="8" rx="2" />
-         ))}
+        {[...Array(8)].map((_, i) => (
+          <rect key={i} x="-280" y={-75 + (i * 20)} width="190" height="8" rx="2" />
+        ))}
       </g>
 
       {/* Front End Shield - Symmetric from -85 to 85 */}
       <path d="M-90,-85 L-60,-50 L-60,50 L-90,85 Z" fill="#93c5fd" stroke="#1d4ed8" />
-      
+
       {/* Bearing Cap */}
       <rect x="-65" y="-20" width="25" height="40" rx="2" fill="#60a5fa" />
     </g>
@@ -140,7 +140,7 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
   // --- GENERIC LOAD GRAPHIC ---
   // Adjusted coordinates to be symmetric around Y=0 (Top -85, Bottom 85)
   const GenericLoadGraphic = () => (
-    <g transform="translate(55, 0)"> 
+    <g transform="translate(55, 0)">
       {/* Extended height to 170 to match motor body range */}
       <rect x="0" y="-85" width="180" height="170" rx="4" fill="url(#loadBodyGrad)" stroke="#1e293b" strokeWidth="2" />
       <rect x="20" y="-75" width="140" height="10" rx="1" fill="#94a3b8" stroke="#475569" />
@@ -157,17 +157,17 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
 
   const DimensionLine = ({ x1, x2, y, label, value, color = "#64748b" }: { x1: number, x2: number, y: number, label: string, value: number, color?: string }) => (
     <g>
-        {/* Main horizontal line */}
-        <line x1={x1} y1={y} x2={x2} y2={y} stroke={color} strokeWidth="1" markerStart="url(#arrow-start)" markerEnd="url(#arrow-end)" />
-        {/* Vertical ticks */}
-        <line x1={x1} y1={y - 5} x2={x1} y2={y + 5} stroke={color} strokeWidth="1" />
-        <line x1={x2} y1={y - 5} x2={x2} y2={y + 5} stroke={color} strokeWidth="1" />
-        {/* Label Background - Scaled up */}
-        <rect x={(x1 + x2)/2 - 45} y={y - 12} width="90" height="24" fill="rgba(255,255,255,0.8)" rx="3" />
-        {/* Label Text - Increased font size to 16. REMOVED LABEL PREFIX (AB/BC) */}
-        <text x={(x1 + x2) / 2} y={y + 6} textAnchor="middle" fontSize="16" fill={color} fontFamily="monospace" fontWeight="bold">
-            {value}
-        </text>
+      {/* Main horizontal line */}
+      <line x1={x1} y1={y} x2={x2} y2={y} stroke={color} strokeWidth="1" markerStart="url(#arrow-start)" markerEnd="url(#arrow-end)" />
+      {/* Vertical ticks */}
+      <line x1={x1} y1={y - 5} x2={x1} y2={y + 5} stroke={color} strokeWidth="1" />
+      <line x1={x2} y1={y - 5} x2={x2} y2={y + 5} stroke={color} strokeWidth="1" />
+      {/* Label Background - Scaled up */}
+      <rect x={(x1 + x2) / 2 - 45} y={y - 12} width="90" height="24" fill="rgba(255,255,255,0.8)" rx="3" />
+      {/* Label Text - Increased font size to 16. REMOVED LABEL PREFIX (AB/BC) */}
+      <text x={(x1 + x2) / 2} y={y + 6} textAnchor="middle" fontSize="16" fill={color} fontFamily="monospace" fontWeight="bold">
+        {value}
+      </text>
     </g>
   );
 
@@ -179,7 +179,7 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
   return (
     <div className="w-full h-[450px] bg-slate-50 border border-slate-300 rounded-xl overflow-hidden relative shadow-inner group">
       <div className="absolute top-4 right-4 text-xs text-slate-400 font-mono text-right pointer-events-none select-none z-10">
-        Scale: 1mm = {VERTICAL_SCALE}px<br/>
+        Scale: 1mm = {VERTICAL_SCALE}px (Exaggerated)<br />
         Visual Pivot Active
       </div>
 
@@ -189,87 +189,87 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
         {/* Floor */}
         <line x1="0" y1={BASE_Y} x2={WIDTH} y2={BASE_Y} stroke="#94a3b8" strokeWidth="4" />
         <path d={`M0,${BASE_Y} L${WIDTH},${BASE_Y} L${WIDTH},${HEIGHT} L0,${HEIGHT} Z`} fill="#e2e8f0" opacity="0.3" />
-        
+
         {/* Target Axis Line */}
         <line x1="0" y1={SHAFT_CENTER_Y_NEUTRAL} x2={WIDTH} y2={SHAFT_CENTER_Y_NEUTRAL} stroke="#ef4444" strokeWidth="1" strokeDasharray="6,4" opacity="0.3" />
 
         {/* --- STATIC LOAD (RIGHT) --- */}
         <g transform={`translate(${COUPLING_CENTER_X}, ${SHAFT_CENTER_Y_NEUTRAL})`}>
-            {/* Coupling Half */}
-            <rect x={GAP} y="-10" width="30" height="20" fill="url(#steelGrad)" stroke="#94a3b8" />
-            <g>
-               <rect x={GAP} y="-32" width="8" height="64" rx="2" fill="url(#steelGrad)" stroke="#64748b" />
-               <rect x={GAP + 8} y="-16" width="12" height="32" rx="1" fill="url(#steelGrad)" stroke="#94a3b8" />
-            </g>
-            <GenericLoadGraphic />
-            <g transform={`translate(0, ${MACHINE_BOTTOM_Y})`}>
-                {/* Front Foot (Right Machine) */}
-                <rect x="75" y="0" width="50" height={FOOT_BASE_Y - MACHINE_BOTTOM_Y} fill="#475569" />
-                {/* Rear Foot (Right Machine) - Shifted 10px left from 185 to 175 */}
-                <rect x="175" y="0" width="50" height={FOOT_BASE_Y - MACHINE_BOTTOM_Y} fill="#475569" />
-            </g>
+          {/* Coupling Half */}
+          <rect x={GAP} y="-10" width="30" height="20" fill="url(#steelGrad)" stroke="#94a3b8" />
+          <g>
+            <rect x={GAP} y="-32" width="8" height="64" rx="2" fill="url(#steelGrad)" stroke="#64748b" />
+            <rect x={GAP + 8} y="-16" width="12" height="32" rx="1" fill="url(#steelGrad)" stroke="#94a3b8" />
+          </g>
+          <GenericLoadGraphic />
+          <g transform={`translate(0, ${MACHINE_BOTTOM_Y})`}>
+            {/* Front Foot (Right Machine) */}
+            <rect x="75" y="0" width="50" height={FOOT_BASE_Y - MACHINE_BOTTOM_Y} fill="#475569" />
+            {/* Rear Foot (Right Machine) - Shifted 10px left from 185 to 175 */}
+            <rect x="175" y="0" width="50" height={FOOT_BASE_Y - MACHINE_BOTTOM_Y} fill="#475569" />
+          </g>
         </g>
 
         {/* --- MOVABLE MOTOR (LEFT) --- */}
         <g transform={`translate(${COUPLING_CENTER_X}, ${displayY}) rotate(${displayAngle})`}>
-            
-            {/* Shaft */}
-            <rect x={-GAP - 30} y="-10" width="30" height="20" fill="url(#steelGrad)" stroke="#94a3b8" />
-            {/* Coupling Half */}
-            <g>
-               <rect x={-GAP - 20} y="-16" width="12" height="32" rx="1" fill="url(#steelGrad)" stroke="#94a3b8" />
-               <rect x={-GAP - 8} y="-32" width="8" height="64" rx="2" fill="url(#steelGrad)" stroke="#64748b" />
-            </g>
 
-            <MotorGraphic />
+          {/* Shaft */}
+          <rect x={-GAP - 30} y="-10" width="30" height="20" fill="url(#steelGrad)" stroke="#94a3b8" />
+          {/* Coupling Half */}
+          <g>
+            <rect x={-GAP - 20} y="-16" width="12" height="32" rx="1" fill="url(#steelGrad)" stroke="#94a3b8" />
+            <rect x={-GAP - 8} y="-32" width="8" height="64" rx="2" fill="url(#steelGrad)" stroke="#64748b" />
+          </g>
 
-            {/* Rear Foot - Shortened to 15px height */}
-            <g transform={`translate(${REAR_FOOT_X}, ${MACHINE_BOTTOM_Y})`}>
-                <path d={`M0,0 L40,0 L50,15 L-10,15 Z`} fill="#1e3a8a" /> 
-                {/* Shims (Positive) */}
-                {alignment.rearShim > 0 && (
-                    <rect x="-5" y="15" width="50" height={alignment.rearShim * VERTICAL_SCALE} fill="#fbbf24" stroke="#d97706" rx="1" />
-                )}
-                {/* Shims (Negative/Cut) - Visualizing Removed Material */}
-                {alignment.rearShim < 0 && (
-                    <rect x="-5" y={15 + (alignment.rearShim * VERTICAL_SCALE)} width="50" height={Math.abs(alignment.rearShim * VERTICAL_SCALE)} fill="url(#hatch)" stroke="#ef4444" strokeDasharray="2,2" rx="1" />
-                )}
-            </g>
+          <MotorGraphic />
 
-            {/* Front Foot - Shortened to 15px height */}
-            <g transform={`translate(${FRONT_FOOT_X}, ${MACHINE_BOTTOM_Y})`}>
-                <path d={`M0,0 L40,0 L50,15 L-10,15 Z`} fill="#1e3a8a" />
-                {/* Shims (Positive) */}
-                {alignment.frontShim > 0 && (
-                    <rect x="-5" y="15" width="50" height={alignment.frontShim * VERTICAL_SCALE} fill="#fbbf24" stroke="#d97706" rx="1"/>
-                )}
-                {/* Shims (Negative/Cut) */}
-                {alignment.frontShim < 0 && (
-                    <rect x="-5" y={15 + (alignment.frontShim * VERTICAL_SCALE)} width="50" height={Math.abs(alignment.frontShim * VERTICAL_SCALE)} fill="url(#hatch)" stroke="#ef4444" strokeDasharray="2,2" rx="1"/>
-                )}
-            </g>
+          {/* Rear Foot - Shortened to 15px height */}
+          <g transform={`translate(${REAR_FOOT_X}, ${MACHINE_BOTTOM_Y})`}>
+            <path d={`M0,0 L40,0 L50,15 L-10,15 Z`} fill="#1e3a8a" />
+            {/* Shims (Positive) */}
+            {alignment.rearShim > 0 && (
+              <rect x="-5" y="15" width="50" height={alignment.rearShim * VERTICAL_SCALE} fill="#fbbf24" stroke="#d97706" rx="1" />
+            )}
+            {/* Shims (Negative/Cut) - Visualizing Removed Material */}
+            {alignment.rearShim < 0 && (
+              <rect x="-5" y={15 + (alignment.rearShim * VERTICAL_SCALE)} width="50" height={Math.abs(alignment.rearShim * VERTICAL_SCALE)} fill="url(#hatch)" stroke="#ef4444" strokeDasharray="2,2" rx="1" />
+            )}
+          </g>
+
+          {/* Front Foot - Shortened to 15px height */}
+          <g transform={`translate(${FRONT_FOOT_X}, ${MACHINE_BOTTOM_Y})`}>
+            <path d={`M0,0 L40,0 L50,15 L-10,15 Z`} fill="#1e3a8a" />
+            {/* Shims (Positive) */}
+            {alignment.frontShim > 0 && (
+              <rect x="-5" y="15" width="50" height={alignment.frontShim * VERTICAL_SCALE} fill="#fbbf24" stroke="#d97706" rx="1" />
+            )}
+            {/* Shims (Negative/Cut) */}
+            {alignment.frontShim < 0 && (
+              <rect x="-5" y={15 + (alignment.frontShim * VERTICAL_SCALE)} width="50" height={Math.abs(alignment.frontShim * VERTICAL_SCALE)} fill="url(#hatch)" stroke="#ef4444" strokeDasharray="2,2" rx="1" />
+            )}
+          </g>
         </g>
 
         {/* --- DIMENSION LINES --- */}
         {/* Drawn relative to the floor/fixed space, translated to align with Motor X axis */}
         <g transform={`translate(${COUPLING_CENTER_X}, 0)`}>
-             {/* AB Dimension: Rear Foot to Front Foot */}
-             <DimensionLine 
-                x1={REAR_FOOT_X + 20} // Roughly center of foot (Foot width is ~50, path is 0 to 50)
-                x2={FRONT_FOOT_X + 20} 
-                y={BASE_Y + 40} 
-                label="AB" 
-                value={alignment.motorLength} 
-            />
+          {/* AB Dimension: Rear Foot to Front Foot */}
+          <DimensionLine
+            x1={REAR_FOOT_X + 20} // Roughly center of foot (Foot width is ~50, path is 0 to 50)
+            x2={FRONT_FOOT_X + 20}
+            y={BASE_Y + 40}
+            label="AB"
+            value={alignment.motorLength}
+          />
 
-            {/* BC Dimension: Front Foot to Coupling */}
-             <DimensionLine 
-                x1={FRONT_FOOT_X + 20} 
-                x2={0} // Coupling center
-                y={BASE_Y + 40} 
-                label="BC" 
-                value={alignment.couplingDist} 
-            />
+          {/* BC Dimension: Front Foot to Coupling */}
+          <DimensionLine
+            x1={FRONT_FOOT_X + 20}
+            x2={0} // Coupling center
+            y={BASE_Y + 40}
+            label="BC"
+            value={alignment.couplingDist}
+          />
         </g>
 
       </svg>
