@@ -9,7 +9,7 @@ interface MachineCanvasProps {
 
 export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results, initialMeasurements }) => {
   // --- CONFIGURATION & CONSTANTS ---
-  const WIDTH = 800;
+  const WIDTH = 600; // Reduced width to minimize side space
   const HEIGHT = 300; // Reduced height as requested
   const BASE_Y = 250; // Floor level (Moved up)
   const SHAFT_CENTER_Y_NEUTRAL = 150; // Where the pump shaft is fixed (Moved up)
@@ -178,15 +178,15 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
 
   return (
     <div className="w-full h-[300px] bg-slate-50 border border-slate-300 rounded-xl overflow-hidden relative shadow-inner group">
-      <svg className="w-full h-full" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} preserveAspectRatio="xMidYMid meet">
+      <svg className="w-full h-full" viewBox="-30 0 600 300" preserveAspectRatio="xMinYMid meet">
         <Gradients />
 
         {/* Floor */}
-        <line x1="0" y1={BASE_Y} x2={WIDTH} y2={BASE_Y} stroke="#94a3b8" strokeWidth="4" />
-        <path d={`M0,${BASE_Y} L${WIDTH},${BASE_Y} L${WIDTH},${HEIGHT} L0,${HEIGHT} Z`} fill="#e2e8f0" opacity="0.3" />
+        <line x1="-30" y1={BASE_Y} x2="570" y2={BASE_Y} stroke="#94a3b8" strokeWidth="4" />
+        <path d="M-30 250 L570 250 L570 300 L-30 300 Z" fill="#e2e8f0" opacity="0.3" />
 
         {/* Target Axis Line */}
-        <line x1="0" y1={SHAFT_CENTER_Y_NEUTRAL} x2={WIDTH} y2={SHAFT_CENTER_Y_NEUTRAL} stroke="#ef4444" strokeWidth="1" strokeDasharray="6,4" opacity="0.3" />
+        <line x1="-30" y1={SHAFT_CENTER_Y_NEUTRAL} x2="570" y2={SHAFT_CENTER_Y_NEUTRAL} stroke="#ef4444" strokeWidth="1" strokeDasharray="6,4" opacity="0.3" />
 
         {/* --- STATIC LOAD (RIGHT) --- */}
         <g transform={`translate(${COUPLING_CENTER_X}, ${SHAFT_CENTER_Y_NEUTRAL})`}>
