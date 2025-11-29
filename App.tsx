@@ -3,6 +3,7 @@ import { MachineCanvas } from './components/MachineCanvas';
 import { ShimControls } from './components/ShimControls';
 import { MeasurementForm } from './components/MeasurementForm';
 import { AIHelp } from './components/AIHelp';
+import { CorrectionPanel } from './components/CorrectionPanel';
 import { calculateAlignment } from './utils/alignmentMath';
 import { AlignmentState, InitialMeasurements } from './types';
 import { Ruler, Info, CheckCircle2, AlertOctagon } from 'lucide-react';
@@ -11,14 +12,14 @@ const App: React.FC = () => {
   // 1. Initial Measurements (Readings from Laser/Dial)
   // Defaulting to 0,0 so user starts with aligned view as requested
   const [measurements, setMeasurements] = useState<InitialMeasurements>({
-    initialOffset: 0.00, 
+    initialOffset: 0.00,
     initialAngle: 0.00,
   });
 
   // 2. Correction State (Shims added)
   // Starts at 0 because we are correcting FROM the initial measurements.
   const [alignment, setAlignment] = useState<AlignmentState>({
-    rearShim: 0.00, 
+    rearShim: 0.00,
     frontShim: 0.00,
     motorLength: 500, // 500mm between feet (BC)
     couplingDist: 200 // 200mm from front foot to coupling (AB)
@@ -43,7 +44,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans">
       <div className="max-w-6xl mx-auto space-y-6">
-        
+
         {/* Header */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
@@ -55,25 +56,25 @@ const App: React.FC = () => {
             </h1>
             <p className="text-slate-500 mt-1">Симулятор центровки валов</p>
           </div>
-          
+
           <div className={`px-4 py-2 rounded-lg border flex items-center gap-2 transition-colors duration-500 ${isPerfect ? 'bg-green-100 border-green-300 text-green-800' : 'bg-slate-200 border-slate-300 text-slate-600'}`}>
-             {isPerfect ? <CheckCircle2 size={20} /> : <AlertOctagon size={20} />}
-             <span className="font-bold">Статус: {isPerfect ? "В ДОПУСКЕ" : "ТРЕБУЕТСЯ ЦЕНТРОВКА"}</span>
+            {isPerfect ? <CheckCircle2 size={20} /> : <AlertOctagon size={20} />}
+            <span className="font-bold">Статус: {isPerfect ? "В ДОПУСКЕ" : "ТРЕБУЕТСЯ ЦЕНТРОВКА"}</span>
           </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
+
           {/* Left Column: Visualization & Controls (8 cols) */}
           <div className="lg:col-span-8 space-y-6">
             {/* Canvas now receives measurements to separate visual base offset from shim pivoting */}
-            <MachineCanvas 
-              alignment={alignment} 
-              results={results} 
-              initialMeasurements={measurements} 
+            <MachineCanvas
+              alignment={alignment}
+              results={results}
+              initialMeasurements={measurements}
             />
-            
-            <ShimControls 
+
+            <ShimControls
               rearShim={alignment.rearShim}
               frontShim={alignment.frontShim}
               onUpdateRear={updateRear}
@@ -84,9 +85,9 @@ const App: React.FC = () => {
 
           {/* Right Column: Inputs, Data & AI (4 cols) */}
           <div className="lg:col-span-4 space-y-6 flex flex-col">
-            
+
             {/* Initial Measurements Input */}
-            <MeasurementForm 
+            <MeasurementForm
               measurements={measurements}
               onMeasurementChange={setMeasurements}
               dimensions={{
@@ -95,16 +96,16 @@ const App: React.FC = () => {
               }}
               onDimensionChange={(key, val) => setAlignment(prev => ({ ...prev, [key]: val }))}
             />
-            
+
             {/* Readings Panel */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
               {isPerfect && <div className="absolute inset-0 bg-green-50/50 pointer-events-none" />}
-              
+
               <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-4 relative z-10">
-                <Info size={18} className="text-blue-500"/>
+                <Info size={18} className="text-blue-500" />
                 Прогнозируемое положение
               </h3>
-              
+
               <div className="space-y-4 relative z-10">
                 <div className={`p-3 rounded-lg border transition-colors duration-300 ${isOffsetOk ? 'bg-green-50 border-green-200' : 'bg-white border-slate-200'}`}>
                   <div className="text-xs text-slate-500 uppercase font-semibold">Параллельное смещение</div>
@@ -125,9 +126,18 @@ const App: React.FC = () => {
               </div>
             </div>
 
+            {/* Correction Calculator */}
+            <CorrectionPanel
+              measurements={measurements}
+              dimensions={{
+                motorLength: alignment.motorLength,
+                couplingDist: alignment.couplingDist
+              }}
+            />
+
             {/* AI Advisor */}
             <div className="flex-1">
-                <AIHelp alignment={alignment} results={results} />
+              <AIHelp alignment={alignment} results={results} />
             </div>
           </div>
 
