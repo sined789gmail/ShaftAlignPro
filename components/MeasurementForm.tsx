@@ -47,8 +47,11 @@ export const MeasurementForm: React.FC<MeasurementFormProps> = ({
   const handleMeasurementChange = (key: keyof InitialMeasurements, value: string, setText: (v: string) => void) => {
     setText(value);
 
+    // Replace comma with dot for parsing
+    const normalizedValue = value.replace(',', '.');
+
     // Allow empty string or just minus sign
-    if (value === '' || value === '-' || value === '.') {
+    if (normalizedValue === '' || normalizedValue === '-' || normalizedValue === '.') {
       onMeasurementChange({
         ...measurements,
         [key]: 0
@@ -56,7 +59,7 @@ export const MeasurementForm: React.FC<MeasurementFormProps> = ({
       return;
     }
 
-    const num = parseFloat(value);
+    const num = parseFloat(normalizedValue);
     if (!isNaN(num)) {
       onMeasurementChange({
         ...measurements,
@@ -68,12 +71,15 @@ export const MeasurementForm: React.FC<MeasurementFormProps> = ({
   const handleDimensionChange = (key: 'motorLength' | 'couplingDist', value: string, setText: (v: string) => void) => {
     setText(value);
 
+    // Replace comma with dot for parsing
+    const normalizedValue = value.replace(',', '.');
+
     // Allow empty string
-    if (value === '' || value === '.') {
+    if (normalizedValue === '' || normalizedValue === '.') {
       return;
     }
 
-    const num = parseFloat(value);
+    const num = parseFloat(normalizedValue);
     if (!isNaN(num) && num >= 0) {
       onDimensionChange(key, num);
     }
