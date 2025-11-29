@@ -154,19 +154,21 @@ export const MeasurementForm: React.FC<MeasurementFormProps> = ({
             <label className="block text-sm font-medium text-slate-600">
               Параллельное (мм)
             </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                {measurements.initialOffset >= 0 ? <ArrowUpFromLine size={16} /> : <ArrowDownToLine size={16} />}
+            <div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  {measurements.initialOffset >= 0 ? <ArrowUpFromLine size={16} /> : <ArrowDownToLine size={16} />}
+                </div>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={offsetText}
+                  onChange={(e) => handleMeasurementChange('initialOffset', e.target.value, setOffsetText)}
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-colors ${measurements.initialOffset === 0 ? 'bg-white border-slate-300 focus:ring-blue-500' :
+                    measurements.initialOffset > 0.05 || measurements.initialOffset < -0.05 ? 'border-red-300 bg-red-50 focus:ring-red-500' : 'border-green-300 bg-green-50 focus:ring-green-500'
+                    }`}
+                />
               </div>
-              <input
-                type="text"
-                inputMode="decimal"
-                value={offsetText}
-                onChange={(e) => handleMeasurementChange('initialOffset', e.target.value, setOffsetText)}
-                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-colors ${measurements.initialOffset === 0 ? 'bg-white border-slate-300 focus:ring-blue-500' :
-                  measurements.initialOffset > 0.05 || measurements.initialOffset < -0.05 ? 'border-red-300 bg-red-50 focus:ring-red-500' : 'border-green-300 bg-green-50 focus:ring-green-500'
-                  }`}
-              />
               <div className="text-xs text-slate-400 mt-1">
                 "-" = Двигатель НИЖЕ
               </div>
@@ -178,19 +180,21 @@ export const MeasurementForm: React.FC<MeasurementFormProps> = ({
             <label className="block text-sm font-medium text-slate-600">
               Угловой (мм/100мм)
             </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <RotateCw size={16} />
+            <div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <RotateCw size={16} />
+                </div>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={angleText}
+                  onChange={(e) => handleMeasurementChange('initialAngle', e.target.value, setAngleText)}
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-colors ${measurements.initialAngle === 0 ? 'bg-white border-slate-300 focus:ring-blue-500' :
+                    Math.abs(measurements.initialAngle) > 0.05 ? 'border-red-300 bg-red-50 focus:ring-red-500' : 'border-green-300 bg-green-50 focus:ring-green-500'
+                    }`}
+                />
               </div>
-              <input
-                type="text"
-                inputMode="decimal"
-                value={angleText}
-                onChange={(e) => handleMeasurementChange('initialAngle', e.target.value, setAngleText)}
-                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:outline-none transition-colors ${measurements.initialAngle === 0 ? 'bg-white border-slate-300 focus:ring-blue-500' :
-                  Math.abs(measurements.initialAngle) > 0.05 ? 'border-red-300 bg-red-50 focus:ring-red-500' : 'border-green-300 bg-green-50 focus:ring-green-500'
-                  }`}
-              />
               <div className="text-xs text-slate-400 mt-1">
                 "-" = Раскрытие СНИЗУ
               </div>
