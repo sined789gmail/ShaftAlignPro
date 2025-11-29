@@ -86,7 +86,7 @@ export const MeasurementForm: React.FC<MeasurementFormProps> = ({
   };
 
   return (
-    <div className="bg-slate-50 border border-slate-200 p-5 rounded-xl mb-6 space-y-6">
+    <div className="bg-slate-50 border border-slate-200 p-5 rounded-xl space-y-6">
 
       {/* Section 1: Geometry */}
       <div>

@@ -44,10 +44,10 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans">
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto">
 
         {/* Header */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <header className="relative flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2.5 pr-28 md:pr-0">
           <div>
             <h1 className="text-3xl font-extrabold text-slate-900 flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white">
@@ -58,16 +58,16 @@ const App: React.FC = () => {
             <p className="text-slate-500 mt-1">Симулятор центровки валов</p>
           </div>
 
-          <div className={`px-4 py-2 rounded-lg border flex items-center gap-2 transition-colors duration-500 ${isPerfect ? 'bg-green-100 border-green-300 text-green-800' : 'bg-slate-200 border-slate-300 text-slate-600'}`}>
+          <div className={`absolute top-0 right-0 md:static px-4 py-2 rounded-lg border flex items-center gap-2 transition-colors duration-500 ${isPerfect ? 'bg-green-100 border-green-300 text-green-800' : 'bg-slate-200 border-slate-300 text-slate-600'}`}>
             {isPerfect ? <CheckCircle2 size={20} /> : <AlertOctagon size={20} />}
-            <span className="font-bold">Статус: {isPerfect ? "В ДОПУСКЕ" : "ТРЕБУЕТСЯ ЦЕНТРОВКА"}</span>
+            <span className="font-bold">{isPerfect ? "В ДОПУСКЕ" : "ТРЕБУЕТСЯ ЦЕНТРОВКА"}</span>
           </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
           {/* Left Column: Visualization & Controls (8 cols) */}
-          <div className="lg:col-span-8 space-y-6">
+          <div className="lg:col-span-8 space-y-2.5">
             {/* Canvas now receives measurements to separate visual base offset from shim pivoting */}
             <MachineCanvas
               alignment={alignment}
@@ -114,7 +114,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Right Column: Inputs, Data & AI (4 cols) */}
-          <div className="lg:col-span-4 space-y-6 flex flex-col">
+          <div className="lg:col-span-4 space-y-2.5 flex flex-col">
 
             {/* Initial Measurements Input */}
             <MeasurementForm
