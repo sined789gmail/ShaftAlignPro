@@ -16,8 +16,8 @@ export const MachineCanvas: React.FC<MachineCanvasProps> = ({ alignment, results
   const COUPLING_CENTER_X = WIDTH / 2;
 
   // VISUAL SCALES
-  // 1mm of movement = 20 pixels on screen. (Increased for better visibility)
-  const VERTICAL_SCALE = 20;
+  // 1mm of movement = 5 pixels on screen
+  const VERTICAL_SCALE = 5;
 
   // Geometry Definitions (X coordinates relative to Coupling Center)
   // These match the "Compact" visual style requested
